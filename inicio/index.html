@@ -3,277 +3,1528 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inicio</title>
+  <title>TurnosPRO — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #0f172a; --panel: rgba(15,23,42,0.95); }
-    html,body { height:100%; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: #f8fafc;
-      min-height: 100vh;
-      text-align: left;
-      padding: 18px;
-      box-sizing: border-box;
-      display: flex;
-      gap: 18px;
+    :root {
+      --bg:        #080c14;
+      --surface:   #0d1320;
+      --card:      #111827;
+      --card2:     #131c2e;
+      --border:    rgba(99,130,180,0.12);
+      --border2:   rgba(99,130,180,0.22);
+      --accent:    #3b82f6;
+      --accent2:   #6366f1;
+      --green:     #22d3a5;
+      --amber:     #f59e0b;
+      --red:       #f43f5e;
+      --text:      #e8edf5;
+      --muted:     #7a8aa8;
+      --dim:       #3d4f6b;
+      --glow:      rgba(59,130,246,0.15);
+      --glow2:     rgba(34,211,165,0.12);
     }
-    .content {
-      width: 100%;
-      height: calc(100vh - 36px);
-      background: var(--panel);
-      border: 1px solid rgba(148, 163, 184, 0.08);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 18px 48px rgba(2,6,23,0.6);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg); }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID PRINCIPAL ── */
+    .shell {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 28px;
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .topbar-spacer { flex: 1; }
+    .topbar-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: rgba(99,130,180,0.08);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .topbar-day {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--green);
+      background: rgba(34,211,165,0.08);
+      border: 1px solid rgba(34,211,165,0.18);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .topbar-logout {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: color .2s, border-color .2s;
+    }
+    .topbar-logout:hover { color: var(--text); border-color: var(--border2); }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-section {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: .1em;
+      color: var(--dim);
+      padding: 8px 20px 4px;
+      text-transform: uppercase;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: color .2s, background .2s, border-color .2s;
+      text-decoration: none;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(59,130,246,0.06); }
+    .nav-icon { width: 16px; height: 16px; opacity: .7; }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-meta {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--dim);
+      line-height: 1.8;
+    }
+    .sidebar-meta span { color: var(--muted); }
+
+    /* ── MAIN ── */
+    .main {
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .page-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border2); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: #2563eb; border-color: #2563eb; color: #fff; }
+    .btn-success {
+      background: rgba(34,211,165,0.1);
+      color: var(--green);
+      border-color: rgba(34,211,165,0.25);
+    }
+    .btn-success:hover { background: rgba(34,211,165,0.18); color: var(--green); }
+    .btn-danger {
+      background: rgba(244,63,94,0.08);
+      color: var(--red);
+      border-color: rgba(244,63,94,0.2);
+    }
+    .btn-danger:hover { background: rgba(244,63,94,0.15); }
+    .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .kpi-card:hover { border-color: var(--border2); }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .kpi-card.blue::before  { background: linear-gradient(90deg, var(--accent), transparent); }
+    .kpi-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .kpi-card.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+    .kpi-card.indigo::before{ background: linear-gradient(90deg, var(--accent2), transparent); }
+    .kpi-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .kpi-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .kpi-value .unit {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 3px;
+    }
+    .kpi-sub {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .kpi-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .trend-up   { background: rgba(34,211,165,0.1); color: var(--green); }
+    .trend-down { background: rgba(244,63,94,0.1);  color: var(--red); }
+
+    /* ── CONTENT GRID ── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
       gap: 20px;
       align-items: start;
     }
-    .hours-panel {
-      text-align: left;
-    }
-    .hours-panel h2 {
-      margin-bottom: 0.5rem;
-      font-size: 1.35rem;
-    }
-    .hours-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(148, 163, 184, 0.15);
-      border-radius: 16px;
+
+    /* ── PANELS ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       overflow: hidden;
     }
-    .hours-table th,
-    .hours-table td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-      color: #e2e8f0;
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
     }
-    .hours-table th {
-      font-size: 0.85rem;
+    .panel-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .panel-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── WORKER TABLE ── */
+    .worker-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .worker-table thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .worker-table th {
+      padding: 10px 20px;
+      font-size: 0.65rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
+      letter-spacing: .08em;
+      color: var(--dim);
       text-align: left;
+      font-weight: 500;
+      white-space: nowrap;
     }
-    .hours-table tr:last-child td {
-      border-bottom: none;
+    .worker-table th:not(:first-child) { text-align: right; }
+    .worker-table td {
+      padding: 14px 20px;
+      font-size: 0.85rem;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
     }
-    .extras-button,
-    .reset-button,
-    a {
-      display: inline-flex;
+    .worker-table td:not(:first-child) { text-align: right; }
+    .worker-table tbody tr:last-child td { border-bottom: none; }
+    .worker-table tbody tr {
+      transition: background .15s;
+    }
+    .worker-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .worker-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.35rem;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: none;
-      background: #2563eb;
-      color: #ffffff;
-      cursor: pointer;
-      text-decoration: none;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.68rem;
       font-weight: 700;
-      transition: background 0.2s ease, transform 0.2s ease;
+      flex-shrink: 0;
     }
-    .hours-form button:hover,
-    .reset-button:hover,
-    a:hover {
-      background: #1d4ed8;
+    .av-blue   { background: rgba(59,130,246,0.15); color: var(--accent); }
+    .av-indigo { background: rgba(99,102,241,0.15); color: var(--accent2); }
+    .av-green  { background: rgba(34,211,165,0.15); color: var(--green); }
+    .av-amber  { background: rgba(245,158,11,0.15); color: var(--amber); }
+    .name-full { font-weight: 500; font-size: 0.85rem; }
+    .val-mono {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .val-total {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .val-extras {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--green);
+    }
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .progress-bar-outer {
+      width: 64px; height: 4px;
+      background: rgba(99,130,180,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width .5s ease;
+    }
+    .progress-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      min-width: 32px;
+    }
+
+    /* Botón extras en tabla */
+    .btn-xs {
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      border-radius: 6px;
+    }
+
+    /* ── SIDEBAR PANEL ── */
+    .side-stack { display: flex; flex-direction: column; gap: 16px; }
+
+    /* ── CHART PANEL ── */
+    .chart-wrap { padding: 16px 20px 20px; }
+    canvas { display: block; width: 100% !important; }
+
+    /* ── WORKER BAR CHART ── */
+    .bar-chart-area { padding: 16px 20px 20px; }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 68px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(99,130,180,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .6s ease;
+    }
+    .bar-fill-sched { background: var(--accent); opacity: .7; }
+    .bar-fill-extra {
+      position: absolute;
+      top: 0; height: 100%;
+      border-radius: 4px;
+      background: var(--green);
+    }
+    .bar-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* ── ACTIONS PANEL ── */
+    .action-grid {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+    }
+    .action-btn:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--border2);
       transform: translateY(-1px);
     }
-    .reset-button {
-      margin-top: 16px;
-      width: 100%;
+    .action-btn svg { width: 18px; height: 18px; margin-bottom: 2px; }
+    .action-btn .ab-label { font-size: 0.78rem; font-weight: 500; }
+    .action-btn .ab-desc  { font-size: 0.65rem; color: var(--muted); line-height: 1.3; }
+    .action-btn.col2 { grid-column: 1 / -1; }
+    .action-btn.danger { color: var(--red); }
+    .action-btn.danger:hover { border-color: rgba(244,63,94,0.25); background: rgba(244,63,94,0.05); }
+    .action-btn.success { color: var(--green); }
+    .action-btn.success:hover { border-color: rgba(34,211,165,0.25); background: rgba(34,211,165,0.05); }
+
+    /* ── LAST UPLOAD / LIVE INDICATOR ── */
+    .live-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.015);
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
     }
-    /* Right column */
-    .side-panel {
-      padding: 18px;
-      background: rgba(255,255,255,0.02);
-      border-radius: 12px;
-      height: calc(100% - 0px);
-      overflow: auto;
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s infinite;
     }
-    .summary-item { margin-bottom: 12px; color: #cbd5e1 }
-    /* Modal */
-    .modal-backdrop { position: fixed; inset:0; background: rgba(2,6,23,0.6); display:none; align-items:center; justify-content:center; z-index:9999 }
-    .modal { background: var(--panel); padding:18px; border-radius:12px; width:360px; box-shadow:0 24px 64px rgba(0,0,0,0.6) }
-    .modal h3{ margin:0 0 12px }
-    .modal .row{ margin-bottom:10px }
-    .modal select, .modal input{ width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(148,163,184,0.12); background:#0f172a; color:#e6eef8 }
-    .modal .actions{ display:flex; gap:8px; margin-top:12px }
-    .modal-body { margin-top: 12px; color: #e2e8f0; font-size: 0.95rem; }
-    .report-summary { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    .report-summary th,
-    .report-summary td { padding: 10px; border: 1px solid rgba(148,163,184,0.14); }
-    .report-summary th { background: rgba(148,163,184,0.08); text-align: left; }
-    .history-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow: auto; }
-    .history-item { background: rgba(255,255,255,0.04); padding: 12px; border-radius: 10px; border: 1px solid rgba(148,163,184,0.12); }
-    h1 {
-      margin-top: 0;
-      font-size: 2rem;
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .4; }
     }
-    p {
-      color: #cbd5e1;
-      line-height: 1.6;
+
+    /* ── WEEKLY SCHEDULE MINI ── */
+    .schedule-grid { padding: 14px 20px 18px; }
+    .sched-worker-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
     }
-    a {
-      display: inline-block;
-      margin-top: 24px;
-      color: #93c5fd;
-      text-decoration: none;
+    .sched-worker-row:last-child { margin-bottom: 0; }
+    .sched-name {
+      font-size: 0.72rem;
+      color: var(--muted);
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .day-cells { display: flex; gap: 3px; }
+    .day-cell {
+      width: 26px; height: 26px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      transition: opacity .2s;
+    }
+    .day-cell.rest {
+      background: rgba(99,130,180,0.06);
+      color: var(--dim);
+    }
+    .day-cell.work {
+      background: rgba(59,130,246,0.12);
+      color: var(--accent);
+    }
+    .day-cell.today-cell {
+      outline: 1.5px solid var(--accent);
+      outline-offset: 1px;
+    }
+    .sched-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .sched-header-name { width: 60px; flex-shrink: 0; }
+    .day-header {
+      width: 26px;
+      text-align: center;
+      font-size: 0.58rem;
+      color: var(--dim);
+      font-family: 'DM Mono', monospace;
+    }
+    .day-header.today-h { color: var(--accent); font-weight: 600; }
+
+    /* ── MODALS ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,8,20,0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal {
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      width: 420px;
+      max-width: 95vw;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+      overflow: hidden;
+    }
+    .modal-top {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-top h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
       font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .modal-close {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      line-height: 1;
+      transition: all .2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .modal-body { padding: 18px 22px; }
+    .form-row { margin-bottom: 14px; }
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+    .form-select, .form-input, .form-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-select:focus,
+    .form-input:focus,
+    .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+    .modal-actions {
+      padding: 14px 22px 20px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .modal-body.report-content { font-size: 0.85rem; color: var(--text); line-height: 1.7; }
+
+    /* ── REPORT TABLE ── */
+    .report-summary {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 0.82rem;
+    }
+    .report-summary th,
+    .report-summary td {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .report-summary th {
+      background: rgba(99,130,180,0.06);
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .report-summary tfoot th {
+      background: rgba(59,130,246,0.08);
+      color: var(--accent);
+    }
+
+    /* ── HISTORY ── */
+    .history-list { display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow: auto; }
+    .history-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .history-item strong {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .history-item span { font-size: 0.75rem; color: var(--muted); }
+    .history-item small { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--dim); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .kpi-card { animation: fadeUp .35s ease both; }
+    .kpi-card:nth-child(1) { animation-delay: .05s; }
+    .kpi-card:nth-child(2) { animation-delay: .10s; }
+    .kpi-card:nth-child(3) { animation-delay: .15s; }
+    .kpi-card:nth-child(4) { animation-delay: .20s; }
+    .panel { animation: fadeUp .4s ease both; animation-delay: .25s; }
+
+    /* ── TABLA INFERIOR (registros) ── */
+    .uploads-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .uploads-table th {
+      padding: 8px 16px;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--dim);
+      text-align: left;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+    .uploads-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .uploads-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .uploads-table tbody tr:last-child td { border-bottom: none; }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-family: 'DM Mono', monospace;
+    }
+    .badge-green { background: rgba(34,211,165,0.1);  color: var(--green); }
+    .badge-blue  { background: rgba(59,130,246,0.1);   color: var(--accent); }
+    .empty-state {
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--dim);
+      font-size: 0.82rem;
+    }
+
+    /* ── RESPONSIVO BÁSICO ── */
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="content">
-      <h1>Bienvenido</h1>
-      <p>Has ingresado correctamente. Esta es la página de inicio a la que te redirige el login.</p>
 
-      <section class="hours-panel">
-        <h2>Horas acumuladas por colaborador</h2>
-        <p>Registra y consulta cuántas horas lleva cada persona trabajadas hasta el momento para el cierre de mes.</p>
+<div class="shell">
 
-        <table class="hours-table">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-dot"></span>
+      TurnosPRO
+    </div>
+    <div class="topbar-spacer"></div>
+    <span class="topbar-badge">v2.0</span>
+    <span class="topbar-day" id="todayLabel">—</span>
+    <a href="../login/index.html" class="topbar-logout">Salir</a>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <span class="sidebar-section">Principal</span>
+    <a class="nav-item active" href="#">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="7" height="7" rx="1.5"/>
+        <rect x="11" y="2" width="7" height="7" rx="1.5"/>
+        <rect x="2" y="11" width="7" height="7" rx="1.5"/>
+        <rect x="11" y="11" width="7" height="7" rx="1.5"/>
+      </svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="../index.html">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="4" width="16" height="13" rx="2"/>
+        <path d="M6 2v4M14 2v4M2 9h16"/>
+      </svg>
+      Cronograma
+    </a>
+
+    <span class="sidebar-section" style="margin-top:8px">Acciones</span>
+    <a class="nav-item" href="#" id="nav-upload">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M10 13V4M7 7l3-3 3 3"/>
+        <path d="M3 15h14"/>
+      </svg>
+      Subir día
+    </a>
+    <a class="nav-item" href="#" id="nav-export">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 16h12M13 3H7a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V5a2 2 0 00-2-2z"/>
+        <path d="M10 8v5M7.5 10.5l2.5 2.5 2.5-2.5"/>
+      </svg>
+      Exportar CSV
+    </a>
+    <a class="nav-item" href="#" id="nav-history">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="10" cy="10" r="7"/>
+        <path d="M10 6v4l2.5 2.5"/>
+      </svg>
+      Histórico
+    </a>
+
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-meta">
+      Última subida<br>
+      <span id="lastUploadSide">—</span>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Panel de horas</div>
+        <div class="page-sub" id="monthLabel">Cargando…</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-success" id="uploadDay">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 11V3M5 6l3-3 3 3"/><path d="M2 13h12"/>
+          </svg>
+          Subir día
+        </button>
+        <button class="btn btn-primary" id="exportCsv">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2"/>
+            <path d="M8 2v8M5.5 7.5L8 10l2.5-2.5"/>
+          </svg>
+          Exportar
+        </button>
+        <button class="btn" id="closeMonth">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 8h8M10 5l3 3-3 3"/>
+          </svg>
+          Cerrar mes
+        </button>
+        <button class="btn" id="viewHistory">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/>
+          </svg>
+          Histórico
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card blue">
+        <div class="kpi-label">Horas programadas</div>
+        <div class="kpi-value"><span id="kpi-scheduled">0</span><span class="unit">h</span></div>
+        <div class="kpi-sub">Acumuladas esta semana</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Horas extra</div>
+        <div class="kpi-value"><span id="kpi-extras">0</span><span class="unit">h</span></div>
+        <div class="kpi-sub">Total colaboradores</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Total general</div>
+        <div class="kpi-value"><span id="kpi-total">0</span><span class="unit">h</span></div>
+        <div class="kpi-sub">Programadas + extras</div>
+      </div>
+      <div class="kpi-card indigo">
+        <div class="kpi-label">Registros del mes</div>
+        <div class="kpi-value"><span id="kpi-uploads">0</span><span class="unit">d</span></div>
+        <div class="kpi-sub">Días subidos</div>
+      </div>
+    </div>
+
+    <!-- Tabla + sidebar -->
+    <div class="content-grid">
+
+      <!-- Tabla colaboradores -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Colaboradores</span>
+          <span class="panel-meta" id="weekDayLabel">Semana actual</span>
+        </div>
+        <table class="worker-table">
           <thead>
             <tr>
               <th>Colaborador</th>
-              <th>Horas programadas</th>
-              <th>Horas extra</th>
+              <th>Programadas</th>
+              <th>Extra</th>
               <th>Total</th>
-              <th>Acciones</th>
+              <th>Avance</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr data-worker="elias">
-              <td>Elías David</td>
-              <td id="scheduled-elias">0 h</td>
-              <td id="extra-elias">0 h</td>
-              <td id="total-elias">0 h</td>
-              <td><button class="extras-button" data-worker="elias">Horas extras</button></td>
+              <td><div class="worker-name"><div class="avatar av-blue">ED</div><span class="name-full">Elías David</span></div></td>
+              <td><span class="val-mono" id="scheduled-elias">0 h</span></td>
+              <td><span class="val-extras" id="extra-elias">0 h</span></td>
+              <td><span class="val-total" id="total-elias">0 h</span></td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-elias" style="width:0%"></div></div>
+                  <span class="progress-pct" id="progpct-elias">0%</span>
+                </div>
+              </td>
+              <td><button class="btn btn-xs extras-button" data-worker="elias">+ Extra</button></td>
             </tr>
             <tr data-worker="jose">
-              <td>José Luis</td>
-              <td id="scheduled-jose">0 h</td>
-              <td id="extra-jose">0 h</td>
-              <td id="total-jose">0 h</td>
-              <td><button class="extras-button" data-worker="jose">Horas extras</button></td>
+              <td><div class="worker-name"><div class="avatar av-indigo">JL</div><span class="name-full">José Luis</span></div></td>
+              <td><span class="val-mono" id="scheduled-jose">0 h</span></td>
+              <td><span class="val-extras" id="extra-jose">0 h</span></td>
+              <td><span class="val-total" id="total-jose">0 h</span></td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-jose" style="width:0%"></div></div>
+                  <span class="progress-pct" id="progpct-jose">0%</span>
+                </div>
+              </td>
+              <td><button class="btn btn-xs extras-button" data-worker="jose">+ Extra</button></td>
             </tr>
             <tr data-worker="darwin">
-              <td>Darwin</td>
-              <td id="scheduled-darwin">0 h</td>
-              <td id="extra-darwin">0 h</td>
-              <td id="total-darwin">0 h</td>
-              <td><button class="extras-button" data-worker="darwin">Horas extras</button></td>
+              <td><div class="worker-name"><div class="avatar av-green">DW</div><span class="name-full">Darwin</span></div></td>
+              <td><span class="val-mono" id="scheduled-darwin">0 h</span></td>
+              <td><span class="val-extras" id="extra-darwin">0 h</span></td>
+              <td><span class="val-total" id="total-darwin">0 h</span></td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-darwin" style="width:0%"></div></div>
+                  <span class="progress-pct" id="progpct-darwin">0%</span>
+                </div>
+              </td>
+              <td><button class="btn btn-xs extras-button" data-worker="darwin">+ Extra</button></td>
             </tr>
             <tr data-worker="caro">
-              <td>Caro</td>
-              <td id="scheduled-caro">0 h</td>
-              <td id="extra-caro">0 h</td>
-              <td id="total-caro">0 h</td>
-              <td><button class="extras-button" data-worker="caro">Horas extras</button></td>
+              <td><div class="worker-name"><div class="avatar av-amber">CA</div><span class="name-full">Caro</span></div></td>
+              <td><span class="val-mono" id="scheduled-caro">0 h</span></td>
+              <td><span class="val-extras" id="extra-caro">0 h</span></td>
+              <td><span class="val-total" id="total-caro">0 h</span></td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-caro" style="width:0%"></div></div>
+                  <span class="progress-pct" id="progpct-caro">0%</span>
+                </div>
+              </td>
+              <td><button class="btn btn-xs extras-button" data-worker="caro">+ Extra</button></td>
             </tr>
           </tbody>
         </table>
-
-        <button class="reset-button" id="resetTotals">Reiniciar totales</button>
-      </section>
-
-      <a href="../login/index.html">Volver al login</a>
-      <div class="side-panel">
-        <h3>Resumen rápido</h3>
-        <div class="summary-item">Hoy: <span id="todayLabel"></span></div>
-        <div class="summary-item">Horas totales (programadas): <span id="sumScheduled">0 h</span></div>
-        <div class="summary-item">Horas extras acumuladas: <span id="sumExtras">0 h</span></div>
-        <div style="margin-top:12px; display:flex; gap:8px; flex-direction:column;">
-          <button id="uploadDay" class="extras-button">Subir horas del día</button>
-          <button id="exportCsv" class="extras-button">Exportar Excel</button>
-          <button id="closeMonth" class="extras-button">Cerrar mes</button>
-          <button id="viewHistory" class="extras-button">Ver histórico</button>
-          <button id="restoreLast" class="reset-button">Restablecer último estado</button>
-          <button id="resetMonth" class="reset-button">Reiniciar mes / Nuevo horario</button>
+        <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; gap:8px;">
+          <button class="btn btn-danger" id="resetTotals">Reiniciar extras</button>
+          <button class="btn" id="resetMonth">Nuevo horario</button>
+          <button class="btn btn-danger" id="restoreLast" style="margin-left:auto">Restaurar backup</button>
         </div>
-        <div style="margin-top:14px; font-size:0.85rem; color:#9fb3d9">Última subida: <span id="lastUpload">—</span></div>
+      </div>
+
+      <!-- Panel lateral -->
+      <div class="side-stack">
+
+        <!-- Gráfica de barras por colaborador -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Distribución de horas</span>
+            <span class="panel-meta">por colaborador</span>
+          </div>
+          <div class="bar-chart-area" id="barChartArea">
+            <!-- Generado por JS -->
+          </div>
+        </div>
+
+        <!-- Horario semanal visual -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Horario semanal</span>
+            <span class="panel-meta">L–D</span>
+          </div>
+          <div class="schedule-grid" id="scheduleGrid">
+            <!-- Generado por JS -->
+          </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Acciones rápidas</span>
+          </div>
+          <div class="action-grid">
+            <button class="action-btn success" id="act-upload">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 13V4M7 7l3-3 3 3"/><path d="M3 16h14"/>
+              </svg>
+              <span class="ab-label">Subir día</span>
+              <span class="ab-desc">Registrar horas de hoy</span>
+            </button>
+            <button class="action-btn" id="act-export">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 13v4h14v-4M10 3v10M7 10l3 3 3-3"/>
+              </svg>
+              <span class="ab-label">CSV</span>
+              <span class="ab-desc">Descargar reporte</span>
+            </button>
+            <button class="action-btn" id="act-history">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 3"/>
+              </svg>
+              <span class="ab-label">Histórico</span>
+              <span class="ab-desc">Meses anteriores</span>
+            </button>
+            <button class="action-btn" id="act-close">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 10h10M13 6l4 4-4 4"/>
+              </svg>
+              <span class="ab-label">Cerrar mes</span>
+              <span class="ab-desc">Generar reporte</span>
+            </button>
+            <button class="action-btn danger col2" id="act-reset">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 4l12 12M16 4L4 16"/>
+              </svg>
+              <span class="ab-label">Reiniciar mes / Nuevo horario</span>
+              <span class="ab-desc">Borra registros y carga nuevo JSON</span>
+            </button>
+          </div>
+          <div class="live-row">
+            <div class="live-dot"></div>
+            Última subida: <span id="lastUpload" style="color:var(--text);margin-left:4px">—</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Modal para horas extras -->
-    <div class="modal-backdrop" id="modalBackdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <h3 id="modalTitle">Agregar Horas Extras</h3>
-        <div class="row">
-          <label>Colaborador</label>
-          <select id="modalWorker">
-            <option value="elias">Elías David</option>
-            <option value="jose">José Luis</option>
-            <option value="darwin">Darwin</option>
-            <option value="caro">Caro</option>
-          </select>
-        </div>
-        <div class="row">
-          <label>Cantidad de horas</label>
-          <input id="modalHours" type="number" min="0.5" step="0.5" placeholder="Ej: 2" />
-        </div>
-        <div class="actions">
-          <button id="modalAdd" class="extras-button">Agregar</button>
-          <button id="modalCancel" class="reset-button">Cancelar</button>
-        </div>
+    <!-- Tabla de registros diarios -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Registro diario del mes</span>
+        <span class="panel-meta" id="uploadsCount">0 entradas</span>
+      </div>
+      <div id="uploadsTableWrap">
+        <div class="empty-state">No hay registros subidos este mes.</div>
       </div>
     </div>
 
-    <!-- Modal reiniciar mes / nuevo horario -->
-    <div class="modal-backdrop" id="resetBackdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
-        <h3 id="resetTitle">Reiniciar mes y establecer nuevo horario</h3>
-        <div class="row">
-          <label>Nuevo horario semanal (JSON corto por trabajador)</label>
-          <textarea id="scheduleTextarea" rows="6" style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#e6eef8; border:1px solid rgba(148,163,184,0.08)">{
-  "elias": [9,9,9,9,9,9,0],
-  "jose": [9,0,9,9,9,9,9],
+    <!-- Gráfica de línea mensual -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Evolución de horas — mes actual</span>
+        <span class="panel-meta">acumulado diario</span>
+      </div>
+      <div class="chart-wrap" style="height:220px; position:relative;">
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══ MODALES (IDs idénticos al original) ═══ -->
+
+<!-- Modal extras -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-top">
+      <h3 id="modalTitle">Agregar horas extra</h3>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label">Colaborador</label>
+        <select id="modalWorker" class="form-select">
+          <option value="elias">Elías David</option>
+          <option value="jose">José Luis</option>
+          <option value="darwin">Darwin</option>
+          <option value="caro">Caro</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Cantidad de horas</label>
+        <input id="modalHours" type="number" min="0.5" step="0.5" placeholder="Ej: 2" class="form-input" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="modalCancel" class="btn">Cancelar</button>
+      <button id="modalAdd" class="btn btn-primary">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal reiniciar mes -->
+<div class="modal-backdrop" id="resetBackdrop">
+  <div class="modal">
+    <div class="modal-top">
+      <h3 id="resetTitle">Reiniciar mes / Nuevo horario</h3>
+      <button class="modal-close" onclick="document.getElementById('resetBackdrop').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label">Nuevo horario semanal (JSON)</label>
+        <textarea id="scheduleTextarea" class="form-textarea">{
+  "elias":  [9,9,9,9,9,9,0],
+  "jose":   [9,0,9,9,9,9,9],
   "darwin": [11,11,8,0,8,8,9],
-  "caro": [0,9,9,9,9,9,8]
+  "caro":   [0,9,9,9,9,9,8]
 }</textarea>
-        </div>
-        <div class="row">
-          <label><input type="checkbox" id="clearUploads" checked /> Borrar registros de este mes y extras acumuladas</label>
-        </div>
-        <div class="actions">
-          <button id="resetConfirm" class="extras-button">Confirmar reinicio</button>
-          <button id="resetCancel" class="reset-button">Cancelar</button>
-        </div>
+      </div>
+      <div class="form-row">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted);cursor:pointer">
+          <input type="checkbox" id="clearUploads" checked style="accent-color:var(--accent)"/>
+          Borrar registros y extras acumuladas del mes
+        </label>
       </div>
     </div>
-
-    <!-- Modal resumen mensual -->
-    <div class="modal-backdrop" id="reportBackdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
-        <h3 id="reportTitle">Mes cerrado</h3>
-        <div class="modal-body" id="reportBody"></div>
-        <div class="actions">
-          <button id="reportClose" class="extras-button">Cerrar</button>
-        </div>
-      </div>
+    <div class="modal-actions">
+      <button id="resetCancel" class="btn">Cancelar</button>
+      <button id="resetConfirm" class="btn btn-primary">Confirmar</button>
     </div>
+  </div>
+</div>
 
-    <!-- Modal histórico mensual -->
-    <div class="modal-backdrop" id="historyBackdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
-        <h3 id="historyTitle">Histórico mensual</h3>
-        <div class="modal-body" id="historyBody"></div>
-        <div class="actions">
-          <button id="historyClose" class="extras-button">Cerrar</button>
-        </div>
-      </div>
+<!-- Modal reporte mensual -->
+<div class="modal-backdrop" id="reportBackdrop">
+  <div class="modal">
+    <div class="modal-top">
+      <h3 id="reportTitle">Mes cerrado</h3>
+      <button class="modal-close" id="reportClose">✕</button>
     </div>
+    <div class="modal-body report-content" id="reportBody"></div>
+    <div class="modal-actions">
+      <button id="reportCloseBtn" class="btn btn-primary">Cerrar</button>
+    </div>
+  </div>
+</div>
 
-    <script src="../firebase-init.js"></script>
-    <script src="../backup.js"></script>
-    <script src="script.js"></script>
-  </body>
+<!-- Modal histórico -->
+<div class="modal-backdrop" id="historyBackdrop">
+  <div class="modal">
+    <div class="modal-top">
+      <h3 id="historyTitle">Histórico mensual</h3>
+      <button class="modal-close" id="historyClose">✕</button>
+    </div>
+    <div class="modal-body" id="historyBody"></div>
+    <div class="modal-actions">
+      <button id="historyCloseBtn" class="btn btn-primary">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="../firebase-init.js"></script>
+<script src="../backup.js"></script>
+<script src="script.js"></script>
+
+<!-- ═══ DASHBOARD UI ENHANCEMENTS ═══ -->
+<script>
+(function() {
+
+  /* ── Mes actual en header ── */
+  document.getElementById('monthLabel').textContent =
+    new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+
+  /* ── Helpers ── */
+  const WORKER_IDS = ['elias','jose','darwin','caro'];
+  const WORKER_NAMES = { elias:'Elías David', jose:'José Luis', darwin:'Darwin', caro:'Caro' };
+  const DAY_LABELS = ['L','M','X','J','V','S','D'];
+  const DAY_FULL   = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  function getTodayIdx() {
+    const d = new Date().getDay();
+    return d === 0 ? 6 : d - 1;
+  }
+
+  function getSchedule() {
+    try { return JSON.parse(localStorage.getItem('month_schedule')) || {}; } catch { return {}; }
+  }
+
+  function getExtras(id) { return Number(localStorage.getItem(`extras_hours_${id}`) || 0); }
+
+  function getUploads() {
+    try { return JSON.parse(localStorage.getItem('daily_uploads')) || []; } catch { return []; }
+  }
+
+  function computeScheduled(workerId) {
+    const today = getTodayIdx();
+    const sched = getSchedule();
+    const arr = sched[workerId] || [];
+    let sum = 0;
+    for (let i = 0; i <= today && i < arr.length; i++) sum += Number(arr[i] || 0);
+    return sum;
+  }
+
+  /* ── KPIs dinámicos ── */
+  function updateKPIs() {
+    let totalSched = 0, totalExt = 0;
+    WORKER_IDS.forEach(id => {
+      totalSched += computeScheduled(id);
+      totalExt   += getExtras(id);
+    });
+    const uploads = getUploads();
+    document.getElementById('kpi-scheduled').textContent = totalSched;
+    document.getElementById('kpi-extras').textContent    = totalExt;
+    document.getElementById('kpi-total').textContent     = totalSched + totalExt;
+    document.getElementById('kpi-uploads').textContent   = uploads.length;
+    document.getElementById('uploadsCount').textContent  = uploads.length + ' entradas';
+  }
+
+  /* ── Barras de progreso en tabla ── */
+  function updateProgressBars() {
+    const maxH = Math.max(...WORKER_IDS.map(id => computeScheduled(id) + getExtras(id)), 1);
+    WORKER_IDS.forEach(id => {
+      const sched = computeScheduled(id);
+      const ext   = getExtras(id);
+      const total = sched + ext;
+      const pct   = Math.round((total / maxH) * 100);
+      const bar   = document.getElementById(`prog-${id}`);
+      const lbl   = document.getElementById(`progpct-${id}`);
+      if (bar) bar.style.width = pct + '%';
+      if (lbl) lbl.textContent  = pct + '%';
+    });
+  }
+
+  /* ── Bar chart lateral ── */
+  function renderBarChart() {
+    const area = document.getElementById('barChartArea');
+    if (!area) return;
+    const maxH = Math.max(...WORKER_IDS.map(id => computeScheduled(id) + getExtras(id)), 1);
+    const colors = ['#3b82f6','#6366f1','#22d3a5','#f59e0b'];
+    area.innerHTML = WORKER_IDS.map((id, i) => {
+      const sched = computeScheduled(id);
+      const ext   = getExtras(id);
+      const total = sched + ext;
+      const pctS  = (sched / maxH * 100).toFixed(1);
+      const pctE  = (ext   / maxH * 100).toFixed(1);
+      return `
+      <div class="bar-row">
+        <div class="bar-label">${WORKER_NAMES[id].split(' ')[0]}</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-sched" style="width:${pctS}%;background:${colors[i]}"></div>
+          <div class="bar-fill bar-fill-extra" style="left:${pctS}%;width:${pctE}%"></div>
+        </div>
+        <div class="bar-val">${total}h</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── Horario semanal visual ── */
+  function renderScheduleGrid() {
+    const grid   = document.getElementById('scheduleGrid');
+    if (!grid) return;
+    const sched  = getSchedule();
+    const today  = getTodayIdx();
+
+    const header = `<div class="sched-header">
+      <div class="sched-header-name"></div>
+      <div class="day-cells">${DAY_LABELS.map((d,i) =>
+        `<div class="day-header${i===today?' today-h':''}">${d}</div>`).join('')}
+      </div>
+    </div>`;
+
+    const rows = WORKER_IDS.map(id => {
+      const arr = sched[id] || Array(7).fill(0);
+      const cells = arr.map((h, i) => {
+        const isRest = !h || h === 0;
+        const isToday = i === today;
+        return `<div class="day-cell ${isRest?'rest':'work'}${isToday?' today-cell':''}">${isRest?'—':h}</div>`;
+      }).join('');
+      return `<div class="sched-worker-row">
+        <div class="sched-name">${WORKER_NAMES[id].split(' ')[0]}</div>
+        <div class="day-cells">${cells}</div>
+      </div>`;
+    }).join('');
+
+    grid.innerHTML = header + rows;
+  }
+
+  /* ── Tabla de registros diarios ── */
+  function renderUploadsTable() {
+    const wrap   = document.getElementById('uploadsTableWrap');
+    const uploads = getUploads();
+    if (!uploads.length) {
+      wrap.innerHTML = '<div class="empty-state">No hay registros subidos este mes.</div>';
+      return;
+    }
+
+    const sorted = uploads.slice().sort((a,b) => b.date.localeCompare(a.date));
+    const rows = sorted.flatMap(u =>
+      WORKER_IDS.filter(id => u.workers[id]).map(id => {
+        const d = u.workers[id];
+        const hasExtra = d.extras > 0;
+        return `<tr>
+          <td>${u.date}</td>
+          <td>${WORKER_NAMES[id]}</td>
+          <td>${d.scheduled} h</td>
+          <td>${hasExtra ? `<span class="badge-pill badge-green">${d.extras} h</span>` : '—'}</td>
+          <td><span class="badge-pill badge-blue">${d.total} h</span></td>
+        </tr>`;
+      })
+    ).join('');
+
+    wrap.innerHTML = `
+      <table class="uploads-table">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Colaborador</th>
+            <th>Programadas</th><th>Extras</th><th>Total</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  /* ── Gráfica de línea (Canvas nativo) ── */
+  function renderLineChart() {
+    const canvas = document.getElementById('lineChart');
+    if (!canvas) return;
+    const uploads = getUploads().slice().sort((a,b) => a.date.localeCompare(b.date));
+    if (!uploads.length) { canvas.style.display='none'; return; }
+
+    canvas.style.display = 'block';
+    const dpr = window.devicePixelRatio || 1;
+    const parent = canvas.parentElement;
+    const W = parent.clientWidth;
+    const H = 200;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Acumular totales por día
+    const workerColors = { elias:'#3b82f6', jose:'#6366f1', darwin:'#22d3a5', caro:'#f59e0b' };
+    const pad = { t:16, r:20, b:36, l:40 };
+    const cW = W - pad.l - pad.r;
+    const cH = H - pad.t - pad.b;
+    const n  = uploads.length;
+
+    // Dataset: total por día (suma todos los workers)
+    const totals = uploads.map(u =>
+      WORKER_IDS.reduce((s, id) => s + (u.workers[id] ? u.workers[id].total : 0), 0)
+    );
+    const maxVal = Math.max(...totals, 1);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(99,130,180,0.1)';
+    ctx.lineWidth   = 0.5;
+    [0, 0.25, 0.5, 0.75, 1].forEach(f => {
+      const y = pad.t + cH * (1 - f);
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(122,138,168,0.6)';
+      ctx.font      = `10px "DM Mono", monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(f * maxVal) + 'h', pad.l - 4, y + 3);
+    });
+
+    // X labels
+    const xStep = cW / Math.max(n - 1, 1);
+    uploads.forEach((u, i) => {
+      const x = pad.l + i * xStep;
+      ctx.fillStyle = 'rgba(122,138,168,0.6)';
+      ctx.font      = `9px "DM Mono", monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(u.date.slice(5), x, H - 8);
+    });
+
+    // Gradient fill under line
+    const pts = totals.map((v, i) => ({
+      x: pad.l + i * xStep,
+      y: pad.t + cH * (1 - v / maxVal)
+    }));
+    const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + cH);
+    grad.addColorStop(0, 'rgba(59,130,246,0.25)');
+    grad.addColorStop(1, 'rgba(59,130,246,0.0)');
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pad.t + cH);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(pts[pts.length-1].x, pad.t + cH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth   = 2;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+
+    // Dots
+    pts.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle   = '#3b82f6';
+      ctx.strokeStyle = 'var(--card)';
+      ctx.lineWidth   = 2;
+      ctx.fill();
+      ctx.stroke();
+    });
+  }
+
+  /* ── Sidebar nav wiring ── */
+  function wireSidebarNav() {
+    const map = {
+      'nav-upload':  'uploadDay',
+      'nav-export':  'exportCsv',
+      'nav-history': 'viewHistory',
+    };
+    Object.entries(map).forEach(([navId, btnId]) => {
+      const nav = document.getElementById(navId);
+      if (nav) nav.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById(btnId)?.click();
+      });
+    });
+    ['act-upload','act-export','act-history','act-close','act-reset'].forEach((actId, i) => {
+      const targets = ['uploadDay','exportCsv','viewHistory','closeMonth','resetMonth'];
+      const el = document.getElementById(actId);
+      if (el) el.addEventListener('click', () => document.getElementById(targets[i])?.click());
+    });
+  }
+
+  /* ── Cerrar modales con botón X adicional ── */
+  function wireExtraModalClose() {
+    document.getElementById('modalCloseBtn')?.addEventListener('click', () => {
+      document.getElementById('modalBackdrop').style.display = 'none';
+    });
+    document.getElementById('reportClose')?.addEventListener('click', () => {
+      document.getElementById('reportBackdrop').style.display = 'none';
+    });
+    document.getElementById('reportCloseBtn')?.addEventListener('click', () => {
+      document.getElementById('reportBackdrop').style.display = 'none';
+    });
+    document.getElementById('historyClose')?.addEventListener('click', () => {
+      document.getElementById('historyBackdrop').style.display = 'none';
+    });
+    document.getElementById('historyCloseBtn')?.addEventListener('click', () => {
+      document.getElementById('historyBackdrop').style.display = 'none';
+    });
+    // Cerrar al hacer clic fuera del modal
+    ['modalBackdrop','resetBackdrop','reportBackdrop','historyBackdrop'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', e => { if (e.target === el) el.style.display = 'none'; });
+    });
+  }
+
+  /* ── Restaurar último backup ── */
+  document.getElementById('restoreLast')?.addEventListener('click', () => {
+    if (window.restaurarUltimoBackup) {
+      if (confirm('¿Restaurar el último estado guardado?')) {
+        window.restaurarUltimoBackup();
+        refreshDashboard();
+      }
+    } else {
+      alert('La función de backup no está disponible.');
+    }
+  });
+
+  /* ── Refresh completo del dashboard ── */
+  function refreshDashboard() {
+    updateKPIs();
+    updateProgressBars();
+    renderBarChart();
+    renderScheduleGrid();
+    renderUploadsTable();
+    renderLineChart();
+    const last = localStorage.getItem('last_upload_date') || '—';
+    document.getElementById('lastUpload').textContent     = last;
+    document.getElementById('lastUploadSide').textContent = last;
+    document.getElementById('weekDayLabel').textContent   =
+      DAY_FULL[getTodayIdx()] + ' — ' + new Date().toLocaleDateString('es-CO');
+  }
+
+  /* ── Init: espera al DOMContentLoaded para que script.js se haya cargado ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    wireSidebarNav();
+    wireExtraModalClose();
+
+    // Parchear renderAll original para también refrescar el dashboard
+    const origRenderAll = window.renderAll;
+    if (typeof origRenderAll === 'function') {
+      window.renderAll = function() {
+        origRenderAll();
+        refreshDashboard();
+      };
+    }
+
+    // Primer render (script.js llama renderAll en su propio DOMContentLoaded;
+    // esperamos un tick para que se ejecute primero)
+    setTimeout(refreshDashboard, 80);
+
+    // Refresco periódico suave cada 30s
+    setInterval(refreshDashboard, 30000);
+  });
+
+})();
+</script>
+
+</body>
 </html>
