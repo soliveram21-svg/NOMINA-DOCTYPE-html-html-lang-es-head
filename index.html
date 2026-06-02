@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurnosPRO — Gestión de Turnos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-group">
+      <div class="logo-icon">🕐</div>
+      <div>
+        <div class="logo-text">TurnosPRO</div>
+        <div class="logo-sub">Gestión de Turnos · Enterprise</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="week-badge">
+        <span class="dot-live"></span>
+        <span id="week-label">Semana activa</span>
+      </div>
+      <div class="next-update">Próxima actualización: <span id="next-sunday"></span></div>
+      <a class="admin-button" href="login/index.html">Admin</a>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">Colaboradores</div>
+      <div class="stat-value">4</div>
+      <div class="stat-sub">Activos esta semana</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Turno actual</div>
+      <div class="stat-value" id="current-day-stat">—</div>
+      <div class="stat-sub" id="current-time-stat">Calculando…</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Semana del año</div>
+      <div class="stat-value" id="week-number">—</div>
+      <div class="stat-sub">Ciclo rotativo</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Rotación</div>
+      <div class="stat-value">Auto</div>
+      <div class="stat-sub">Actualiza dom 12:00 pm</div>
+    </div>
+  </div>
+
+  <!-- Countdown to next update -->
+  <div class="countdown-bar">
+    <div>
+      <div class="countdown-label">⏱ Próxima rotación en</div>
+      <div class="countdown-timer" id="countdown">--:--:--</div>
+      <div class="countdown-sub">Domingo a las 12:00 PM</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="week-progress" style="width:0%"></div>
+    </div>
+    <div>
+      <div class="countdown-label">Progreso semana</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;" id="progress-pct">0%</div>
+      <div class="countdown-sub">lun → dom</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="section-header">
+    <h2>Horario de Turnos</h2>
+    <span class="section-pill" id="week-range-pill">cargando…</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="schedule-table">
+      <thead>
+        <tr>
+          <th>Colaborador</th>
+          <th id="th-lun">Lun</th>
+          <th id="th-mar">Mar</th>
+          <th id="th-mie">Mié</th>
+          <th id="th-jue">Jue</th>
+          <th id="th-vie">Vie</th>
+          <th id="th-sab">Sáb</th>
+          <th id="th-dom">Dom</th>
+        </tr>
+      </thead>
+      <tbody id="schedule-body">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:rgba(0,119,255,0.5); border:1px solid rgba(0,119,255,0.8);"></div>
+      Turno activo hoy
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:rgba(74,222,128,0.3); border:1px solid rgba(74,222,128,0.5);"></div>
+      Día de descanso
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:rgba(255,197,66,0.3); border:1px solid rgba(255,197,66,0.5);"></div>
+      Descanso fijo (Elías — domingo)
+    </div>
+    <div class="legend-item">
+      <span style="font-size:0.75rem;color:var(--accent2);">9h</span>&nbsp;= Horas del turno
+    </div>
+  </div>
+
+  <footer>
+    <strong>TurnosPRO</strong> · Sistema de Gestión de Turnos · Actualización automática cada domingo 12:00 PM
+  </footer>
+</div>
+
+<script src="firebase-init.js"></script>
+<script src="backup.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
